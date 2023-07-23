@@ -1,5 +1,3 @@
-// Gerekli güz ve derinlik ayarları
-
 // Temel JavaScript örnekleri - Dilediğiniz gibi düzenleyebilirsiniz
 const messageContainer = document.querySelector(".message-container");
 const messageInput = document.getElementById("messageInput");
