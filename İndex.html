@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Global Sohbet Platformu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #messages p {
+            margin: 0;
+            padding: 5px 0;
+        }
+        #messages p:nth-child(odd) {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Global Sohbet Platformu</h1>
+    <p>Takma adınızı girin:</p>
+    <input type="text" id="nickname">
+    <p>Mesajınızı yazın:</p>
+    <textarea id="message"></textarea><br><br>
+    <button id="send">Gönder</button>
+    <div id="messages"></div>
+    <script>
+        const nicknameInput = document.querySelector('#nickname');
+        const messageInput = document.querySelector('#message');
+        const sendButton = document.querySelector('#send');
+        const messagesDiv = document.querySelector('#messages');
+
+        sendButton.addEventListener('click', async () => {
+            const nickname = nicknameInput.value;
+            const message = messageInput.value;
+
+            if (nickname && message) {
+                await fetch('/.netlify/functions/chat', {
+                    method: 'POST',
+                    body: JSON.stringify({nickname, message})
+                });
+                renderMessages();
+                messageInput.value = '';
+            }
+        });
+
+        async function renderMessages() {
+            const res = await fetch('/.netlify/functions/chat');
+            const messages = await res.json();
+            let html = '';
+            for (const msg of messages) {
+                html += `<p><strong>${msg.nickname}:</strong> ${msg.message}</p>`;
+            }
+            messagesDiv.innerHTML = html;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        renderMessages();
+    </script>
+</body>
+</html>
